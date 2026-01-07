@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <style>
+    /* ✅ Mismo CSS que en respuesta anterior (diseño oscuro elegante) */
     :root {
       --color-primary: #4e73df;
       --color-primary-light: #6c8cef;
@@ -161,6 +162,15 @@
       align-items: center;
       justify-content: center;
       cursor: crosshair;
+      text-align: center;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    /* ✅ Zona de drop + texto guía */
+    .canvas-container.droppable {
+      border-color: var(--color-primary);
+      background: var(--color-surface-hover);
     }
 
     canvas {
@@ -234,6 +244,7 @@
       white-space: nowrap;
       font-size: 12px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .tab-btn:hover { color: var(--color-primary); }
     .tab-btn.active { border-bottom-color: var(--color-primary); color: var(--color-primary); }
@@ -272,11 +283,26 @@
 
     .btn-group { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 
+    .dropzone {
+      padding: 16px;
+      border: 2px dashed var(--color-border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      color: var(--color-text-secondary);
+      text-align: center;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--color-primary);
+      background: rgba(78, 115, 223, 0.05);
+    }
+
     @media (max-width: 1024px) {
       .grid-2 { grid-template-columns: 1fr; }
     }
 
-    /* Loading overlay */
     #loadingOverlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -347,7 +373,10 @@
         <h2>👁️ Vista Frontal</h2>
         <div class="form-group">
           <label>Cargar foto frontal</label>
-          <input type="file" id="frontImage" accept="image/*">
+          <div class="dropzone" id="frontDropzone">
+            Arrastra aquí o haz clic para seleccionar<br><small>(formato: JPG, PNG)</small>
+            <input type="file" id="frontImage" accept="image/*" style="display:none;">
+          </div>
         </div>
         <div class="canvas-container" id="frontContainer">
           <canvas id="frontCanvas"></canvas>
@@ -363,7 +392,10 @@
         <h2>👁️ Vista Lateral (Perfil)</h2>
         <div class="form-group">
           <label>Cargar foto lateral derecha</label>
-          <input type="file" id="profileImage" accept="image/*">
+          <div class="dropzone" id="profileDropzone">
+            Arrastra aquí o haz clic para seleccionar<br><small>(formato: JPG, PNG)</small>
+            <input type="file" id="profileImage" accept="image/*" style="display:none;">
+          </div>
         </div>
         <div class="canvas-container" id="profileContainer">
           <canvas id="profileCanvas"></canvas>
@@ -463,6 +495,7 @@
     // --- Estado global ---
     let frontCtx, profileCtx;
     let frontImage = null, profileImage = null;
+    let canvasState = { front: { scale: 1, offsetX: 0, offsetY: 0 }, profile: { scale: 1, offsetX: 0, offsetY: 0 } };
     let landmarks = { front: [], profile: [] };
 
     // --- Inicialización ---
@@ -490,14 +523,42 @@
     }
 
     function setupEventListeners() {
+      // --- Inputs ---
       document.getElementById('frontImage').addEventListener('change', e => loadImage(e, 'front'));
       document.getElementById('profileImage').addEventListener('change', e => loadImage(e, 'profile'));
 
+      // --- Dropzones ---
+      setupDropzone('frontDropzone', 'frontImage');
+      setupDropzone('profileDropzone', 'profileImage');
+
+      // --- Botones IA ---
       document.getElementById('detectFrontBtn').addEventListener('click', detectFrontWithFaceAPI);
       document.getElementById('detectProfileBtn').addEventListener('click', detectProfileWithFaceAPI);
     }
 
-    // --- Cargar imágenes ---
+    // --- Manejo de arrastrar y soltar ---
+    function setupDropzone(dropzoneId, inputId) {
+      const dropzone = document.getElementById(dropzoneId);
+      const input = document.getElementById(inputId);
+
+      dropzone.addEventListener('click', () => input.click());
+      dropzone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          const event = new Event('change', { bubbles: true });
+          input.dispatchEvent(event);
+        }
+      });
+    }
+
+    // --- Cargar imágenes SIN DISTORSIONAR ✅ ---
     function loadImage(e, type) {
       const file = e.target.files[0];
       if (!file) return;
@@ -507,11 +568,10 @@
         img.onload = () => {
           if (type === 'front') {
             frontImage = img;
-            drawImage('front');
           } else {
             profileImage = img;
-            drawImage('profile');
           }
+          drawImage(type); // ✅ Aquí se preserva proporción
         };
         img.src = event.target.result;
       };
@@ -523,28 +583,54 @@
       const container = document.getElementById(`${type}Container`);
       const img = type === 'front' ? frontImage : profileImage;
 
-      const maxWidth = container.offsetWidth - 4;
-      const maxHeight = 500;
+      if (!img) return;
+
+      // ✅ ALGORITMO: Contain (sin deformar)
+      const maxWidth = container.clientWidth - 4;
+      const maxHeight = container.clientHeight - 4;
       const ratio = img.width / img.height;
-      canvas.width = Math.min(maxWidth, img.width);
-      canvas.height = Math.min(maxHeight, canvas.width / ratio);
+      let w = img.width;
+      let h = img.height;
+
+      if (w > maxWidth) {
+        w = maxWidth;
+        h = w / ratio;
+      }
+      if (h > maxHeight) {
+        h = maxHeight;
+        w = h * ratio;
+      }
+
+      // Centrar
+      canvas.width = maxWidth;
+      canvas.height = maxHeight;
+      const x = (maxWidth - w) / 2;
+      const y = (maxHeight - h) / 2;
 
       const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#141e2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, x, y, w, h);
+
+      // Guardar estado para mapeo de coordenadas
+      canvasState[type] = { imageX: x, imageY: y, imageW: w, imageH: h, originalW: img.width, originalH: img.height };
 
       if (type === 'front') frontCtx = ctx;
       else profileCtx = ctx;
 
-      // Click para añadir landmarks manuales
+      // Click → landmarks
       canvas.onclick = (e) => {
         const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        addLandmark(type, x, y);
+        const scaleX = canvasState[type].originalW / canvasState[type].imageW;
+        const scaleY = canvasState[type].originalH / canvasState[type].imageH;
+        const x = (e.clientX - rect.left - canvasState[type].imageX) * scaleX;
+        const y = (e.clientY - rect.top - canvasState[type].imageY) * scaleY;
+        if (x >= 0 && x <= canvasState[type].originalW && y >= 0 && y <= canvasState[type].originalH) {
+          addLandmark(type, x, y);
+        }
       };
 
-      // Redibujar landmarks existentes
+      // Redibujar landmarks
       landmarks[type].forEach(lm => drawLandmark(type, lm));
       calculateMeasurements();
     }
@@ -563,21 +649,22 @@
       const ctx = type === 'front' ? frontCtx : profileCtx;
       if (!ctx) return;
 
-      // Punto
+      const state = canvasState[type];
+      const x = state.imageX + (lm.x * state.imageW / state.originalW);
+      const y = state.imageY + (lm.y * state.imageH / state.originalH);
+
       ctx.fillStyle = '#1cc88a';
       ctx.beginPath();
-      ctx.arc(lm.x, lm.y, 5, 0, 2 * Math.PI);
+      ctx.arc(x, y, 5, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Borde
       ctx.strokeStyle = '#fff';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Etiqueta
       ctx.fillStyle = '#e8eef5';
       ctx.font = 'bold 12px Arial';
-      ctx.fillText(lm.name, lm.x + 10, lm.y - 8);
+      ctx.fillText(lm.name, x + 10, y - 8);
     }
 
     function updateLandmarkList(type) {
@@ -610,11 +697,10 @@
           return;
         }
 
-        const detection = detections[0]; // Primera cara
+        const detection = detections[0];
         const points = detection.landmarks.positions;
 
-        // Mapeo aproximado a puntos ortodónticos estándar (simulado)
-        // Nota: face-api da 68 puntos (~MPEG), aquí los convertimos a notación clínica
+        // Mapeo clínico (simulado — mejorable con modelo entrenado)
         landmarks.front = [
           { name: 'Tr', x: points[27].x, y: points[19].y },
           { name: 'G',  x: points[27].x, y: points[27].y },
@@ -622,16 +708,11 @@
           { name: 'Me', x: points[8].x,  y: points[8].y },
           { name: 'Ex', x: points[0].x,  y: points[0].y },
           { name: 'En', x: points[36].x, y: points[36].y }
-        ].map(lm => ({
-          name: lm.name,
-          x: (lm.x / frontImage.width) * frontCanvas.width,
-          y: (lm.y / frontImage.height) * frontCanvas.height
-        }));
+        ];
 
         drawImage('front');
         updateLandmarkList('front');
         calculateMeasurements();
-        alert('✅ Detección automática completada.');
       } catch (err) {
         console.error('Error en face-api:', err);
         alert('❌ Error al procesar la imagen. Verifica consola.');
@@ -647,9 +728,9 @@
         return;
       }
 
-      // Simulación con puntos relativos (mejorable con modelo entrenado)
-      const canvas = document.getElementById('profileCanvas');
-      const w = canvas.width, h = canvas.height;
+      // Simulación con puntos relativos a imagen original
+      const state = canvasState.profile;
+      const w = state.originalW, h = state.originalH;
 
       landmarks.profile = [
         { name: 'N',  x: 0.25*w, y: 0.20*h },
@@ -681,7 +762,6 @@
       const a = calculateDistance(p2, p3);
       const b = calculateDistance(p1, p3);
       const c = calculateDistance(p1, p2);
-      // Ley de cosenos
       const cos = (a*a + c*c - b*b) / (2 * a * c);
       return Math.round(Math.acos(Math.max(-1, Math.min(1, cos))) * 180 / Math.PI);
     }
@@ -744,9 +824,8 @@
       if (n && pog) {
         const dist = calculateDistance(n, pog);
         document.getElementById('facialConvexity').textContent = `${Math.round(dist)} px`;
-        // Interpretación cualitativa (simplificada)
         let status = 'ok';
-        if (dist > 80) status = 'error'; // muy convexo
+        if (dist > 80) status = 'error';
         else if (dist > 60) status = 'warning';
         const el = document.getElementById('convexityStatus');
         el.className = 'status';
@@ -770,6 +849,8 @@
       landmarks.front = [];
       const canvas = document.getElementById('frontCanvas');
       canvas.width = canvas.height = 0;
+      const container = document.getElementById('frontContainer');
+      container.innerHTML = '<canvas id="frontCanvas"></canvas>';
       updateLandmarkList('front');
       calculateMeasurements();
     }
@@ -779,6 +860,8 @@
       landmarks.profile = [];
       const canvas = document.getElementById('profileCanvas');
       canvas.width = canvas.height = 0;
+      const container = document.getElementById('profileContainer');
+      container.innerHTML = '<canvas id="profileCanvas"></canvas>';
       updateLandmarkList('profile');
       calculateMeasurements();
     }
@@ -796,7 +879,7 @@
     function downloadJSON() {
       const data = {
         meta: {
-          app: 'OdontoApp v2.0',
+          app: 'OdontoApp v2.1',
           clinic: 'DentiStudio',
           generated: new Date().toISOString(),
           patient: {
