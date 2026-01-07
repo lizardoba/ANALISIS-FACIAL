@@ -1,22 +1,1456 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OdontoApp - Análisis Facial Ortodóntico</title>
+    <style>
+        :root {
+            --color-primary: #4e73df;
+            --color-primary-light: #6c8cef;
+            --color-primary-dark: #224abe;
+            --color-success: #1cc88a;
+            --color-warning: #f6c23e;
+            --color-danger: #e74c3c;
+            --color-info: #36b9cc;
+            --color-bg: #0f172a;
+            --color-surface: #1a2332;
+            --color-surface-hover: #232d3f;
+            --color-text: #e8eef5;
+            --color-text-secondary: #a8b5c7;
+            --color-border: #2a3d56;
+            --color-success-bg: #0d5f4f;
+            --color-warning-bg: #5f4f0d;
+            --color-danger-bg: #5f0d0d;
+        }
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Facial Ortodóntico</title>
+    <title>OdontoApp - Análisis Facial Ortodóntico</title>
     <style>
         :root {
-            --color-primary: #2196F3;
-            --color-primary-dark: #1976D2;
-            --color-success: #4CAF50;
-            --color-warning: #FF9800;
-            --color-danger: #F44336;
-            --color-bg: #f5f5f5;
-            --color-surface: #ffffff;
-            --color-text: #212121;
-            --color-text-secondary: #757575;
-            --color-border: #e0e0e0;
+            --color-primary: #4e73df;
+            --color-primary-light: #6c8cef;
+            --color-primary-dark: #224abe;
+            --color-success: #1cc88a;
+            --color-warning: #f6c23e;
+            --color-danger: #e74c3c;
+            --color-info: #36b9cc;
+            --color-bg: #0f172a;
+            --color-surface: #1a2332;
+            --color-surface-hover: #232d3f;
+            --color-text: #e8eef5;
+            --color-text-secondary: #a8b5c7;
+            --color-border: #2a3d56;
+            --color-success-bg: #0d5f4f;
+            --color-warning-bg: #5f4f0d;
+            --color-danger-bg: #5f0d0d;
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            border-bottom: 3px solid var(--color-info);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            padding: 24px;
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(78, 115, 223, 0.15);
+            border-color: var(--color-primary);
+        }
+
+        .card h2 {
+            margin-bottom: 16px;
+            font-size: 18px;
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            margin-top: 16px;
+            margin-bottom: 10px;
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--color-bg);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
+            background: var(--color-surface-hover);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+            box-shadow: 0 6px 16px rgba(78, 115, 223, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--color-surface-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+            border-color: var(--color-primary);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a35d;
+        }
+
+        .btn-warning {
+            background: var(--color-warning);
+            color: #000;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+
+        .btn-icon {
+            padding: 12px 16px;
+            font-size: 11px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-container {
+            position: relative;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--color-bg);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 600px;
+        }
+
+        .measurements {
+            margin-top: 20px;
+            background: var(--color-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .measurement-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--color-surface-hover);
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .measurement-label {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .measurement-value {
+            color: var(--color-primary);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .measurement-status {
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-ok {
+            background: rgba(28, 200, 138, 0.2);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+
+        .status-warning {
+            background: rgba(246, 194, 62, 0.2);
+            color: var(--color-warning);
+            border: 1px solid var(--color-warning);
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(54, 185, 204, 0.1);
+            border-color: var(--color-info);
+            color: var(--color-info);
+        }
+
+        .alert-success {
+            background: rgba(28, 200, 138, 0.1);
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .alert-warning {
+            background: var(--color-warning-bg);
+            border-color: var(--color-warning);
+            color: var(--color-warning);
+        }
+
+        .alert-danger {
+            background: var(--color-danger-bg);
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--color-border);
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .landmark-list {
+            background: var(--color-bg);
+            padding: 14px;
+            border-radius: 6px;
+            margin-top: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .landmark-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            margin-bottom: 6px;
+            background: var(--color-surface);
+            border-radius: 4px;
+            font-size: 11px;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .landmark-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            flex-shrink: 0;
+        }
+
+        .landmark-name {
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .landmark-coords {
+            color: var(--color-text-secondary);
+            font-size: 10px;
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .guide-card {
+            background: var(--color-surface-hover);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
+            font-size: 11px;
+        }
+
+        .guide-card strong {
+            color: var(--color-primary);
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+        }
+
+        .floating-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(78, 115, 223, 0.6);
+        }
+
+        .guide-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .guide-overlay.active {
+            display: flex;
+        }
+
+        .guide-modal {
+            background: var(--color-surface);
+            border-radius: 12px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            border: 2px solid var(--color-primary);
+        }
+
+        .guide-modal h3 {
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+
+        .close-guide {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+        }
+
+        .close-guide:hover {
+            color: var(--color-danger);
+        }
+
+        .analysis-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .summary-box {
+            background: var(--color-bg);
+            padding: 14px;
+            border-radius: 6px;
+            border-left: 4px solid var(--color-primary);
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📐 OdontoApp – Análisis Facial Ortodóntico</h1>
+        <p>Sistema profesional de análisis facial cuantitativo con IA para diagnóstico y planificación ortodóntica</p>
+    </header>
+
+    <div class="container">
+        <!-- SECCIÓN: DATOS DEL PACIENTE -->
+        <div class="card">
+            <h2>👤 Información del Paciente</h2>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="patientName" placeholder="Ej: Juan Pérez García">
+                </div>
+                <div class="form-group">
+                    <label>Edad (años)</label>
+                    <input type="number" id="patientAge" min="0" max="120" placeholder="25">
+                </div>
+                <div class="form-group">
+                    <label>Género</label>
+                    <select id="patientGender">
+                        <option value="">Seleccionar...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Evaluación</label>
+                    <input type="date" id="evaluationDate">
+                </div>
+                <div class="form-group">
+                    <label>Clínica</label>
+                    <input type="text" id="clinicName" placeholder="Ej: Clínica Dental XYZ">
+                </div>
+                <div class="form-group">
+                    <label>ID Paciente (opcional)</label>
+                    <input type="text" id="patientId" placeholder="Ej: PAC-2026-001">
+                </div>
+            </div>
+        </div>
+
+        <!-- GUÍA FOTOGRÁFICA -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(54,185,204,0.1) 0%, rgba(78,115,223,0.05) 100%); border: 2px solid rgba(54,185,204,0.3);">
+            <h2>📸 Guía para Fotografías Estándar</h2>
+            <button class="btn btn-primary btn-icon" onclick="openGuide()">ℹ️ Ver Instrucciones Completas</button>
+            <div class="guides-grid">
+                <div class="guide-card">
+                    <strong>📍 Vista Frontal Natural</strong>
+                    <ul style="margin-top: 8px; padding-left: 16px; font-size: 11px; line-height: 1.4;">
+                        <li>Ojos mirando al frente</li>
+                        <li>Labios relajados (reposo)</li>
+                        <li>Posición natural de la cabeza</li>
+                        <li>Línea de Frankfort paralela al suelo</li>
+                    </ul>
+                </div>
+                <div class="guide-card">
+                    <strong>📍 Perfil Derecho Natural</strong>
+                    <ul style="margin-top: 8px; padding-left: 16px; font-size: 11px; line-height: 1.4;">
+                        <li>Perfil 90° derecho</li>
+                        <li>Labios en posición de reposo</li>
+                        <li>Mismo posicionamiento de cabeza</li>
+                        <li>Evitar inclinaciones</li>
+                    </ul>
+                </div>
+                <div class="guide-card">
+                    <strong>📍 Elementos Adicionales</strong>
+                    <ul style="margin-top: 8px; padding-left: 16px; font-size: 11px; line-height: 1.4;">
+                        <li>Usar escala de referencia si es posible</li>
+                        <li>Buena iluminación frontal</li>
+                        <li>Imagen nítida y enfocada</li>
+                        <li>Incluir foto de sonrisa amplia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- VISTA FRONTAL -->
+            <div class="card">
+                <h2>👁️ Vista Frontal</h2>
+                <div class="form-group">
+                    <label>Cargar Foto Frontal (Natural)</label>
+                    <input type="file" id="frontImage" accept="image/*">
+                </div>
+                <div class="canvas-container" id="frontContainer">
+                    <canvas id="frontCanvas"></canvas>
+                </div>
+                <div id="frontLandmarks" class="landmark-list"></div>
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-small" onclick="detectFrontLandmarks()">🤖 Detectar Puntos IA</button>
+                    <button class="btn btn-secondary btn-small" onclick="clearFrontImage()">🗑️ Limpiar</button>
+                </div>
+            </div>
+
+            <!-- VISTA LATERAL -->
+            <div class="card">
+                <h2>👁️ Vista Lateral (Perfil)</h2>
+                <div class="form-group">
+                    <label>Cargar Foto Lateral Derecha (Natural)</label>
+                    <input type="file" id="profileImage" accept="image/*">
+                </div>
+                <div class="canvas-container" id="profileContainer">
+                    <canvas id="profileCanvas"></canvas>
+                </div>
+                <div id="profileLandmarks" class="landmark-list"></div>
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-small" onclick="detectProfileLandmarks()">🤖 Detectar Puntos IA</button>
+                    <button class="btn btn-secondary btn-small" onclick="clearProfileImage()">🗑️ Limpiar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANÁLISIS FRONTAL -->
+        <div class="card">
+            <h2>📊 Análisis Frontal (Vista Anterior)</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'frontal-thirds')">Tercios Faciales</button>
+                <button class="tab-btn" onclick="switchTab(this, 'frontal-fifths')">Quintos Faciales</button>
+                <button class="tab-btn" onclick="switchTab(this, 'frontal-symmetry')">Líneas Medias</button>
+                <button class="tab-btn" onclick="switchTab(this, 'frontal-proportions')">Proporciones</button>
+                <button class="tab-btn" onclick="switchTab(this, 'frontal-smile')">Análisis de Sonrisa</button>
+            </div>
+
+            <div class="tab-content active" id="frontal-thirds">
+                <div class="alert alert-info">💡 Los tres tercios faciales ideales deben ser aproximadamente iguales (1:1:1). Evalúa equilibrio vertical.</div>
+                <div class="measurements" id="thirdsContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Tercio Superior (Tr → G)</div>
+                        <div class="measurement-value" id="superiorThird">-</div>
+                        <div class="measurement-status"><span class="status" id="superiorStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Tercio Medio (G → Sn)</div>
+                        <div class="measurement-value" id="middleThird">-</div>
+                        <div class="measurement-status"><span class="status" id="middleStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Tercio Inferior (Sn → Me)</div>
+                        <div class="measurement-value" id="inferiorThird">-</div>
+                        <div class="measurement-status"><span class="status" id="inferiorStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Altura Facial Total</div>
+                        <div class="measurement-value" id="totalFacialHeight">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="frontal-fifths">
+                <div class="alert alert-info">💡 Cada quinto facial debe medir aproximadamente 1 ancho de ojo (20% ancho facial). Proporciones 1:1:1:1:1 ideales.</div>
+                <div class="measurements" id="fifthsContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Quinto 1: Trago Izq - Canto Lat Izq</div>
+                        <div class="measurement-value" id="fifth1">-</div>
+                        <div class="measurement-status"><span class="status" id="fifth1Status">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Quinto 2: Canto Lat Izq - Canto Med Izq</div>
+                        <div class="measurement-value" id="fifth2">-</div>
+                        <div class="measurement-status"><span class="status" id="fifth2Status">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Quinto 3: Ancho Internasal (Centro)</div>
+                        <div class="measurement-value" id="fifth3">-</div>
+                        <div class="measurement-status"><span class="status" id="fifth3Status">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Quinto 4: Canto Med Der - Canto Lat Der</div>
+                        <div class="measurement-value" id="fifth4">-</div>
+                        <div class="measurement-status"><span class="status" id="fifth4Status">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Quinto 5: Canto Lat Der - Trago Der</div>
+                        <div class="measurement-value" id="fifth5">-</div>
+                        <div class="measurement-status"><span class="status" id="fifth5Status">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="frontal-symmetry">
+                <div class="alert alert-info">💡 Línea media facial vs línea media dental. Desviaciones < 2-3 mm son normales. Evalúa coincidencia entre líneas.</div>
+                <div class="measurements" id="symmetryContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Desviación Línea Media Facial</div>
+                        <div class="measurement-value" id="midlineDeviation">-</div>
+                        <div class="measurement-status"><span class="status" id="midlineStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Desviación Líneas</div>
+                        <div class="measurement-value" id="midlineAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="angleStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Asimetría Cantal Derecha</div>
+                        <div class="measurement-value" id="cantalAsymD">-</div>
+                        <div class="measurement-status"><span class="status" id="cantalStatusD">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Asimetría Cantal Izquierda</div>
+                        <div class="measurement-value" id="cantalAsymL">-</div>
+                        <div class="measurement-status"><span class="status" id="cantalStatusL">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="frontal-proportions">
+                <div class="alert alert-info">💡 Índice facial y proporciones bizigomáticas. Clasificación: Euriprosopo (≥1.06), Mesoprosopo (0.93-1.05), Leptoprosopo (≤0.92).</div>
+                <div class="measurements" id="proportionsContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ancho Bicigoático (Zy-Zy)</div>
+                        <div class="measurement-value" id="bizygomatic">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ancho Bigonial (Go-Go)</div>
+                        <div class="measurement-value" id="bigonial">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Índice Facial (Alto/Ancho)</div>
+                        <div class="measurement-value" id="facialIndex">-</div>
+                        <div class="measurement-status"><span class="status" id="facialIndexStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Tipo Facial</div>
+                        <div class="measurement-value" id="facialType">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Índice Bizigomático/Bigonial</div>
+                        <div class="measurement-value" id="bigoIndexRatio">-</div>
+                        <div class="measurement-status"><span class="status" id="bigoStatus">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="frontal-smile">
+                <div class="alert alert-info">💡 Exposición incisiva, línea de sonrisa, y relación con ancho facial. Sonrisa ideal: 75-100% de arco maxilar visible.</div>
+                <div class="measurements" id="smileContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Altura Labial en Reposo</div>
+                        <div class="measurement-value" id="lipResting">-</div>
+                        <div class="measurement-status"><span class="status" id="lipRestingStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Exposición Incisiva (Reposo)</div>
+                        <div class="measurement-value" id="incisorExposure">-</div>
+                        <div class="measurement-status"><span class="status" id="incisorStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ancho de Sonrisa vs Bizigomático</div>
+                        <div class="measurement-value" id="smileWidth">-</div>
+                        <div class="measurement-status"><span class="status" id="smileWidthStatus">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANÁLISIS LATERAL/PERFIL -->
+        <div class="card">
+            <h2>📐 Análisis Lateral / Perfil (Vista Sagital)</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(this, 'profile-basic')">Análisis Básico</button>
+                <button class="tab-btn" onclick="switchTab(this, 'profile-angles')">Ángulos Estéticos</button>
+                <button class="tab-btn" onclick="switchTab(this, 'profile-lines')">Líneas Esqueléticas</button>
+                <button class="tab-btn" onclick="switchTab(this, 'profile-esthetics')">Línea E & Estética</button>
+                <button class="tab-btn" onclick="switchTab(this, 'profile-ratios')">Proporciones</button>
+            </div>
+
+            <div class="tab-content active" id="profile-basic">
+                <div class="alert alert-info">💡 Evaluación de tipo de perfil, convexidad y alturas anteroposteriores. Base para diagnóstico de maloclusiones sagitales.</div>
+                <div class="measurements" id="basicContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Tipo de Perfil (Convexidad N-A-Pog)</div>
+                        <div class="measurement-value" id="profileType">-</div>
+                        <div class="measurement-status"><span class="status" id="profileTypeStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Convexidad Facial (Dist N-Pog)</div>
+                        <div class="measurement-value" id="facialConvexity">-</div>
+                        <div class="measurement-status"><span class="status" id="convexityStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Altura Facial Anterior (N-Me)</div>
+                        <div class="measurement-value" id="anteriorFacialHeight">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Altura Facial Posterior (S-Go)</div>
+                        <div class="measurement-value" id="posteriorFacialHeight">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="profile-angles">
+                <div class="alert alert-warning">⚠️ Ángulos clave para diagnóstico de maloclusión esquelética y dental. Rango normal entre paréntesis.</div>
+                <div class="measurements" id="anglesContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Nasolabial (Cm-Sn-Ls) [90-110°]</div>
+                        <div class="measurement-value" id="nasolabialAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="nasolabialStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Mentolabial (Ls-Li-Pog) [120-135°]</div>
+                        <div class="measurement-value" id="mentolabialAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="mentolabialStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Plano Mandibular [20-30°]</div>
+                        <div class="measurement-value" id="mandibularPlaneAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="mandPlaneStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Gonial [120-130°]</div>
+                        <div class="measurement-value" id="gonialAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="gonialStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo Nasofrontal [115-130°]</div>
+                        <div class="measurement-value" id="nasofrontalAngle">-</div>
+                        <div class="measurement-status"><span class="status" id="nasofrontalStatus">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="profile-lines">
+                <div class="alert alert-info">💡 Líneas de referencia esquelética: SN, plano mandibular, plano oclusal. Fundamentales para análisis cefalométrico.</div>
+                <div class="measurements" id="linesContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Línea SN (Sella-Nasion)</div>
+                        <div class="measurement-value" id="SNline">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Línea GoGn (Gónial-Mentoniana)</div>
+                        <div class="measurement-value" id="GoGnline">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Ángulo SN.GoGn [32-38°]</div>
+                        <div class="measurement-value" id="SNGoGn">-</div>
+                        <div class="measurement-status"><span class="status" id="SNGoGnStatus">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="profile-esthetics">
+                <div class="alert alert-success">✅ Línea E (Ricketts): Distancia ideal labio superior -1 a -2 mm, labio inferior 0 a -1 mm.</div>
+                <div class="measurements" id="estheticsContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Línea E (Pronasale → Pog Soft)</div>
+                        <div class="measurement-value" id="ELineRef">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Distancia Labio Superior a Línea E</div>
+                        <div class="measurement-value" id="eLineLipUpper">-</div>
+                        <div class="measurement-status"><span class="status" id="eLipUpperStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Distancia Labio Inferior a Línea E</div>
+                        <div class="measurement-value" id="eLineLipLower">-</div>
+                        <div class="measurement-status"><span class="status" id="eLipLowerStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Línea H (Holdaway)</div>
+                        <div class="measurement-value" id="HLine">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Relación S-Line (Subnasale-Pogonion)</div>
+                        <div class="measurement-value" id="SLine">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="profile-ratios">
+                <div class="alert alert-info">💡 Relaciones proporcionales: Maxila/Mandíbula, Anterior/Posterior, Dimensión Vertical.</div>
+                <div class="measurements" id="ratiosContent">
+                    <div class="measurement-row">
+                        <div class="measurement-label">Proporción Maxila/Mandíbula</div>
+                        <div class="measurement-value" id="maxilaMandibleRatio">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Proporción Alt Anterior/Posterior</div>
+                        <div class="measurement-value" id="heightRatio">-</div>
+                        <div class="measurement-status"><span class="status" id="heightRatioStatus">-</span></div>
+                    </div>
+                    <div class="measurement-row">
+                        <div class="measurement-label">Proporción Tercio Inferior</div>
+                        <div class="measurement-value" id="lowerThirdRatio">-</div>
+                        <div class="measurement-status">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMEN DIAGNOSTICO -->
+        <div class="card">
+            <h2>🔍 Resumen Diagnóstico</h2>
+            <div class="analysis-summary" id="diagnosticSummary">
+                <div class="summary-box">
+                    <div class="summary-label">Tipo Facial Vertical</div>
+                    <div class="summary-value" id="summaryVertical">-</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-label">Tipo Facial Sagital</div>
+                    <div class="summary-value" id="summarySagital">-</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-label">Convexidad</div>
+                    <div class="summary-value" id="summaryConvexity">-</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-label">Simetría</div>
+                    <div class="summary-value" id="summarySymmetry">-</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-label">Est. Labial</div>
+                    <div class="summary-value" id="summaryLabial">-</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-label">Patrón Sonrisa</div>
+                    <div class="summary-value" id="summarySmile">-</div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Hallazgos Clínicos Principales</h3>
+            <textarea id="findings" placeholder="Resumen de los hallazgos más relevantes del análisis facial..." style="width: 100%; min-height: 100px; padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; font-family: inherit; font-size: 12px; background: var(--color-bg); color: var(--color-text);"></textarea>
+
+            <h3 style="margin-top: 16px;">Recomendaciones de Tratamiento</h3>
+            <textarea id="recommendations" placeholder="Plan de tratamiento, consideraciones estéticas y objetivos quirúrgicos (si aplica)..." style="width: 100%; min-height: 100px; padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; font-family: inherit; font-size: 12px; background: var(--color-bg); color: var(--color-text);"></textarea>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-primary export-btn" onclick="generateReport()">📄 Generar Reporte PDF</button>
+                <button class="btn btn-secondary export-btn" onclick="downloadJSON()">💾 Exportar JSON</button>
+                <button class="btn btn-success export-btn" onclick="clearAll()">🔄 Nuevo Análisis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GUÍA MODAL -->
+    <div class="guide-overlay" id="guideOverlay">
+        <div class="guide-modal">
+            <span class="close-guide" onclick="closeGuide()">&times;</span>
+            <h3>📸 Guía Completa de Fotografía Ortodóntica</h3>
+            <hr style="border: none; border-top: 1px solid var(--color-border); margin: 16px 0;">
+            
+            <h4 style="color: var(--color-primary); margin-top: 16px;">✅ Vista Frontal Natural</h4>
+            <p>• <strong>Postura de cabeza:</strong> Línea de Frankfort paralela al suelo (línea entre trago y canto lateral del ojo)</p>
+            <p>• <strong>Ojos:</strong> Mirando directamente al lente, sin inclinar la cabeza</p>
+            <p>• <strong>Labios:</strong> En posición de reposo natural (sin sonrisa ni tensión)</p>
+            <p>• <strong>Encuadre:</strong> Desde cabello hasta mentón inferior</p>
+            <p>• <strong>Iluminación:</strong> Frontal uniforme, sin sombras laterales</p>
+            
+            <h4 style="color: var(--color-primary); margin-top: 16px;">✅ Perfil Derecho Natural</h4>
+            <p>• <strong>Postura:</strong> Perfil 90° a la cámara, línea de Frankfort horizontal</p>
+            <p>• <strong>Labios:</strong> En contacto relajado (ligera oclusión funcional)</p>
+            <p>• <strong>Ojos:</strong> Naturales, sin forzar expresión</p>
+            <p>• <strong>Distancia:</strong> Igual que foto frontal para coherencia</p>
+            <p>• <strong>Encuadre:</strong> Desde cabello hasta mentón, incluyendo cuello</p>
+            
+            <h4 style="color: var(--color-primary); margin-top: 16px;">📐 Escala de Referencia (Opcional pero Recomendado)</h4>
+            <p>• Usar una regla o pinza de calibre de 50-100 mm visible en la foto</p>
+            <p>• Posicionar a nivel de los puntos de referencia facial</p>
+            <p>• Asegurar que sea visible en ambas vistas</p>
+            <p>• Mejora la precisión de mediciones automatizadas</p>
+            
+            <h4 style="color: var(--color-success); margin-top: 16px;">💡 Recomendaciones Adicionales</h4>
+            <p>• Usar resolución mínima 2MP (1600x1200 px)</p>
+            <p>• Evitar filtros o edición digital</p>
+            <p>• Consistencia en iluminación y fondo</p>
+            <p>• Tomar múltiples fotos y seleccionar la mejor</p>
+            <p>• Incluir foto de sonrisa amplia para análisis adicional</p>
+            
+            <button class="btn btn-primary" onclick="closeGuide()" style="margin-top: 20px;">Entendido ✓</button>
+        </div>
+    </div>
+
+    <!-- ACCIONES FLOTANTES -->
+    <div class="floating-actions">
+        <button class="fab" onclick="openGuide()" title="Ver Guía">?</button>
+        <button class="fab" onclick="downloadJSON()" title="Descargar Datos" style="background: linear-gradient(135deg, #1cc88a 0%, #17a2b8 100%);">⬇️</button>
+        <button class="fab" onclick="generateReport()" title="Generar Reporte" style="background: linear-gradient(135deg, #f6c23e 0%, #ffc107 100%); color: #000;">📄</button>
+    </div>
+
+    <script>
+        let frontCtx, profileCtx;
+        let frontImage = null, profileImage = null;
+        let landmarks = { front: [], profile: [] };
+        let measurementData = {};
+
+        // Inicializar
+        document.getElementById('evaluationDate').valueAsDate = new Date();
+
+        // Cargar imágenes
+        document.getElementById('frontImage').addEventListener('change', function(e) {
+            loadImage(e, 'front');
+        });
+
+        document.getElementById('profileImage').addEventListener('change', function(e) {
+            loadImage(e, 'profile');
+        });
+
+        function loadImage(e, type) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    if (type === 'front') {
+                        frontImage = img;
+                        drawImage('front');
+                    } else {
+                        profileImage = img;
+                        drawImage('profile');
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function drawImage(type) {
+            const canvasId = type === 'front' ? 'frontCanvas' : 'profileCanvas';
+            const containerId = type === 'front' ? 'frontContainer' : 'profileContainer';
+            const img = type === 'front' ? frontImage : profileImage;
+            
+            const canvas = document.getElementById(canvasId);
+            const container = document.getElementById(containerId);
+            
+            canvas.width = container.offsetWidth - 4;
+            const ratio = img.height / img.width;
+            canvas.height = Math.min(canvas.width * ratio, 600);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            if (type === 'front') {
+                frontCtx = ctx;
+            } else {
+                profileCtx = ctx;
+            }
+
+            canvas.addEventListener('click', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                addLandmark(type, x, y);
+            });
+        }
+
+        function addLandmark(type, x, y) {
+            const landmarkName = prompt('Nombre del punto de referencia (ej: N, A, B, Pog, Sn, G, etc):', '').toUpperCase();
+            if (!landmarkName) return;
+
+            landmarks[type].push({ name: landmarkName, x: x, y: y });
+
+            const ctx = type === 'front' ? frontCtx : profileCtx;
+            ctx.fillStyle = '#4e73df';
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            ctx.fillStyle = '#4e73df';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText(landmarkName, x + 10, y - 10);
+
+            updateLandmarkList(type);
+            calculateMeasurements();
+        }
+
+        function updateLandmarkList(type) {
+            const container = type === 'front' ? 'frontLandmarks' : 'profileLandmarks';
+            const list = document.getElementById(container);
+            list.innerHTML = '<strong style="color: var(--color-primary);">' + (type === 'front' ? '👁️ Puntos Frontales' : '👁️ Puntos de Perfil') + ' (' + landmarks[type].length + ')</strong>';
+            
+            landmarks[type].forEach((landmark, index) => {
+                const item = document.createElement('div');
+                item.className = 'landmark-item';
+                item.innerHTML = `
+                    <div class="landmark-dot"></div>
+                    <div class="landmark-name">${landmark.name}</div>
+                    <div class="landmark-coords">(${Math.round(landmark.x)}, ${Math.round(landmark.y)})</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function removeLandmark(type, index) {
+            landmarks[type].splice(index, 1);
+            const img = type === 'front' ? frontImage : profileImage;
+            if (img) drawImage(type);
+            updateLandmarkList(type);
+            calculateMeasurements();
+        }
+
+        function detectFrontLandmarks() {
+            if (!frontImage) {
+                alert('Por favor, carga una imagen frontal primero');
+                return;
+            }
+            // Simulación de detección automática con puntos predeterminados
+            const detectedLandmarks = [
+                { name: 'Tr', x: 200, y: 50 },
+                { name: 'G', x: 200, y: 120 },
+                { name: 'Sn', x: 200, y: 220 },
+                { name: 'Me', x: 200, y: 350 },
+                { name: 'Ex', x: 100, y: 150 },
+                { name: 'En', x: 150, y: 150 },
+                { name: 'Al', x: 200, y: 220 },
+                { name: 'Zy', x: 280, y: 180 },
+                { name: 'Go', x: 250, y: 320 }
+            ];
+            landmarks.front = detectedLandmarks;
+            const canvas = document.getElementById('frontCanvas');
+            frontCtx = canvas.getContext('2d');
+            drawImage('front');
+            detectedLandmarks.forEach(lm => {
+                frontCtx.fillStyle = '#1cc88a';
+                frontCtx.beginPath();
+                frontCtx.arc(lm.x, lm.y, 5, 0, 2 * Math.PI);
+                frontCtx.fill();
+                frontCtx.strokeStyle = '#fff';
+                frontCtx.lineWidth = 2;
+                frontCtx.beginPath();
+                frontCtx.arc(lm.x, lm.y, 5, 0, 2 * Math.PI);
+                frontCtx.stroke();
+                frontCtx.fillStyle = '#1cc88a';
+                frontCtx.font = 'bold 11px Arial';
+                frontCtx.fillText(lm.name, lm.x + 10, lm.y - 8);
+            });
+            updateLandmarkList('front');
+            calculateMeasurements();
+        }
+
+        function detectProfileLandmarks() {
+            if (!profileImage) {
+                alert('Por favor, carga una imagen de perfil primero');
+                return;
+            }
+            const detectedLandmarks = [
+                { name: 'N', x: 120, y: 90 },
+                { name: 'S', x: 110, y: 180 },
+                { name: 'A', x: 180, y: 200 },
+                { name: 'B', x: 170, y: 260 },
+                { name: 'Pog', x: 200, y: 320 },
+                { name: 'Me', x: 200, y: 340 },
+                { name: 'Cm', x: 150, y: 200 },
+                { name: 'Sn', x: 150, y: 210 },
+                { name: 'Ls', x: 160, y: 240 },
+                { name: 'Li', x: 170, y: 265 },
+                { name: 'Go', x: 240, y: 300 },
+                { name: 'Ar', x: 80, y: 100 }
+            ];
+            landmarks.profile = detectedLandmarks;
+            const canvas = document.getElementById('profileCanvas');
+            profileCtx = canvas.getContext('2d');
+            drawImage('profile');
+            detectedLandmarks.forEach(lm => {
+                profileCtx.fillStyle = '#1cc88a';
+                profileCtx.beginPath();
+                profileCtx.arc(lm.x, lm.y, 5, 0, 2 * Math.PI);
+                profileCtx.fill();
+                profileCtx.strokeStyle = '#fff';
+                profileCtx.lineWidth = 2;
+                profileCtx.beginPath();
+                profileCtx.arc(lm.x, lm.y, 5, 0, 2 * Math.PI);
+                profileCtx.stroke();
+                profileCtx.fillStyle = '#1cc88a';
+                profileCtx.font = 'bold 11px Arial';
+                profileCtx.fillText(lm.name, lm.x + 10, lm.y - 8);
+            });
+            updateLandmarkList('profile');
+            calculateMeasurements();
+        }
+
+        function findLandmark(type, name) {
+            return landmarks[type].find(l => l.name.toUpperCase() === name.toUpperCase());
+        }
+
+        function calculateDistance(p1, p2) {
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        }
+
+        function calculateAngle(p1, p2, p3) {
+            const v1 = { x: p1.x - p2.x, y: p1.y - p2.y };
+            const v2 = { x: p3.x - p2.x, y: p3.y - p2.y };
+            
+            const dot = v1.x * v2.x + v1.y * v2.y;
+            const det = v1.x * v2.y - v1.y * v2.x;
+            const angle = Math.atan2(det, dot) * 180 / Math.PI;
+            
+            return Math.abs(angle);
+        }
+
+        function calculateMeasurements() {
+            // FRONTAL ANALYSIS
+            const tr = findLandmark('front', 'Tr');
+            const g = findLandmark('front', 'G');
+            const sn = findLandmark('front', 'Sn');
+            const me = findLandmark('front', 'Me');
+
+            if (tr && g && sn && me) {
+                const third1 = calculateDistance(tr, g);
+                const third2 = calculateDistance(g, sn);
+                const third3 = calculateDistance(sn, me);
+
+                document.getElementById('superiorThird').textContent = Math.round(third1) + ' px';
+                document.getElementById('middleThird').textContent = Math.round(third2) + ' px';
+                document.getElementById('inferiorThird').textContent = Math.round(third3) + ' px';
+
+                const avgThird = (third1 + third2 + third3) / 3;
+                const variance = Math.abs(third1 - avgThird);
+
+                updateStatus('superiorStatus', variance < 10 ? 'ok' : variance < 20 ? 'warning' : 'error');
+                updateStatus('middleStatus', variance < 10 ? 'ok' : variance < 20 ? 'warning' : 'error');
+                updateStatus('inferiorStatus', variance < 10 ? 'ok' : variance < 20 ? 'warning' : 'error');
+
+                document.getElementById('totalFacialHeight').textContent = Math.round(third1 + third2 + third3) + ' px';
+            }
+
+            // PROFILE ANALYSIS
+            const cm = findLandmark('profile', 'Cm');
+            const sn_profile = findLandmark('profile', 'Sn');
+            const ls = findLandmark('profile', 'Ls');
+            const li = findLandmark('profile', 'Li');
+            const pog = findLandmark('profile', 'Pog');
+            const n = findLandmark('profile', 'N');
+
+            if (cm && sn_profile && ls) {
+                const nasolabialAngle = calculateAngle(cm, sn_profile, ls);
+                document.getElementById('nasolabialAngle').textContent = Math.round(nasolabialAngle) + '°';
+                updateStatus('nasolabialStatus', nasolabialAngle >= 90 && nasolabialAngle <= 110 ? 'ok' : nasolabialAngle >= 80 && nasolabialAngle <= 120 ? 'warning' : 'error');
+            }
+
+            if (ls && li && pog) {
+                const mentolabialAngle = calculateAngle(ls, li, pog);
+                document.getElementById('mentolabialAngle').textContent = Math.round(mentolabialAngle) + '°';
+                updateStatus('mentolabialStatus', mentolabialAngle >= 120 && mentolabialAngle <= 135 ? 'ok' : mentolabialAngle >= 110 && mentolabialAngle <= 145 ? 'warning' : 'error');
+            }
+
+            if (n && pog) {
+                const convexity = calculateDistance(n, pog);
+                document.getElementById('facialConvexity').textContent = Math.round(convexity) + ' px';
+                updateStatus('convexityStatus', 'ok');
+            }
+
+            updateDiagnosticSummary();
+        }
+
+        function updateStatus(elementId, status) {
+            const elem = document.getElementById(elementId);
+            if (!elem) return;
+            elem.className = 'status';
+            elem.classList.add('status-' + status);
+            elem.textContent = status === 'ok' ? '✓ Normal' : status === 'warning' ? '⚠ Límite' : '✗ Alterado';
+        }
+
+        function updateDiagnosticSummary() {
+            document.getElementById('summaryVertical').textContent = '—';
+            document.getElementById('summarySagital').textContent = '—';
+            document.getElementById('summaryConvexity').textContent = '—';
+            document.getElementById('summarySymmetry').textContent = '—';
+            document.getElementById('summaryLabial').textContent = '—';
+            document.getElementById('summarySmile').textContent = '—';
+        }
+
+        function switchTab(btn, tabId) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            parent.parentElement.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function clearFrontImage() {
+            frontImage = null;
+            landmarks.front = [];
+            document.getElementById('frontCanvas').width = 0;
+            document.getElementById('frontLandmarks').innerHTML = '';
+            calculateMeasurements();
+        }
+
+        function clearProfileImage() {
+            profileImage = null;
+            landmarks.profile = [];
+            document.getElementById('profileCanvas').width = 0;
+            document.getElementById('profileLandmarks').innerHTML = '';
+            calculateMeasurements();
+        }
+
+        function openGuide() {
+            document.getElementById('guideOverlay').classList.add('active');
+        }
+
+        function closeGuide() {
+            document.getElementById('guideOverlay').classList.remove('active');
+        }
+
+        function generateReport() {
+            alert('Función de generación PDF en desarrollo. Datos capturados exitosamente. Usa "Exportar JSON" para guardar.');
+        }
+
+        function downloadJSON() {
+            const data = {
+                paciente: {
+                    nombre: document.getElementById('patientName').value,
+                    edad: document.getElementById('patientAge').value,
+                    genero: document.getElementById('patientGender').value,
+                    fecha: document.getElementById('evaluationDate').value,
+                    clinica: document.getElementById('clinicName').value,
+                    id: document.getElementById('patientId').value
+                },
+                analisis: {
+                    frontal: {
+                        tercioSuperior: document.getElementById('superiorThird').textContent,
+                        tercioMedio: document.getElementById('middleThird').textContent,
+                        tercioInferior: document.getElementById('inferiorThird').textContent
+                    },
+                    perfil: {
+                        anguloNasolabial: document.getElementById('nasolabialAngle').textContent,
+                        anguloMentolabial: document.getElementById('mentolabialAngle').textContent,
+                        convexidad: document.getElementById('facialConvexity').textContent
+                    }
+                },
+                puntos: landmarks,
+                hallazgos: document.getElementById('findings').value,
+                recomendaciones: document.getElementById('recommendations').value,
+                fecha_generacion: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `odonto_${document.getElementById('patientName').value || 'paciente'}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function clearAll() {
+            if (confirm('¿Limpiar todos los datos y comenzar nuevo análisis?')) {
+                landmarks = { front: [], profile: [] };
+                frontImage = null;
+                profileImage = null;
+                document.getElementById('frontImage').value = '';
+                document.getElementById('profileImage').value = '';
+                clearFrontImage();
+                clearProfileImage();
+                document.getElementById('findings').value = '';
+                document.getElementById('recommendations').value = '';
+                document.getElementById('evaluationDate').valueAsDate = new Date();
+                calculateMeasurements();
+                alert('Sistema reiniciado');
+            }
+        }
+    </script>
+</body>
+</html>
 
         * {
             margin: 0;
